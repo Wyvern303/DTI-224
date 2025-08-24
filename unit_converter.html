@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unit Converter</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        width: 340px;
+      }
+
+      h1 {
+        color: black;
+        margin-top: 0;
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+
+      label {
+        font-size: 16px;
+        color: #444;
+        font-weight: 500;
+      }
+
+      input[type="number"],
+      input[type="text"],
+      select {
+        width: 85%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        transition: border 0.3s, box-shadow 0.3s;
+      }
+
+      input:focus {
+        border-color: black;
+        outline: none;
+      }
+
+      #alert {
+        color: #e63946;
+        font-weight: bold;
+        min-height: 20px;
+        margin-bottom: 10px;
+      }
+
+      .error {
+        color: #e63946; /* red */
+      }
+
+      #resultValue {
+        font-weight: bold;
+        margin-top: 15px;
+        font-size: 18px;
+        min-height: 24px;
+      }
+
+      button {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        border: none;
+        background: black;
+        color: #fff;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        margin: 6px;
+      }
+
+      button:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+
+      .back-home {
+        display: block;
+        text-align: center;
+        margin-top: 25px;
+        padding: 10px 20px;
+        background: black;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .back-home:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Unit Converter</h1>
+
+      <div id="selectorContainer">
+        <label for="conversionType">Choose a conversion type:</label>
+        <br />
+        <select id="conversionType">
+          <option value="">--Select--</option>
+          <option value="length">Length/Height</option>
+          <option value="temperature">Temperature</option>
+          <option value="area">Area</option>
+        </select>
+        <p id="errorMessage"></p>
+        <button onclick="showConverter()">Next</button>
+      </div>
+
+      <div id="converterContainer" style="display: none"></div>
+
+      <a href="index.html" class="back-home" style="display: block"
+        >Back to Home</a
+      >
+    </div>
+
+    <script>
+      function showConverter() {
+        const type = document.getElementById("conversionType").value;
+        const container = document.getElementById("converterContainer");
+        const selector = document.getElementById("selectorContainer");
+
+        if (type === "" || type === null) {
+          document.getElementById("errorMessage").innerHTML =
+            "Please select a conversion type.";
+          document.getElementById("errorMessage").classList.add("error");
+          return;
+        } else {
+          document.getElementById("errorMessage").innerHTML = "";
+        }
+
+        selector.style.display = "none";
+        container.style.display = "block";
+
+        const units = {
+          length: ["Meter", "Kilometer", "Centimeter", "Inch", "Foot"],
+          temperature: ["Celsius", "Fahrenheit", "Kelvin"],
+          area: [
+            "Square Meter",
+            "Square Kilometer",
+            "Square Foot",
+            "Acre",
+            "Hectare",
+          ],
+        };
+
+        container.innerHTML = `
+          <input type="number" id="inputValue" placeholder="Enter value" step="any" autofocus required/>
+          <select id="fromUnit">
+            ${units[type]
+              .map((u) => `<option value="${u.toLowerCase()}">${u}</option>`)
+              .join("")}
+          </select>
+          <p id="alert"></p>
+          <br />
+          <button onclick="convert('${type}')">Convert</button>
+          <button onclick="resetForm()">Clear</button>
+          <button onclick="goBack()">Back</button>
+          <br />
+          <input type="text" id="resultValue" readonly placeholder="Result" />
+          <select id="toUnit">
+            ${units[type]
+              .map((u) => `<option value="${u.toLowerCase()}">${u}</option>`)
+              .join("")}
+          </select>
+        `;
+      }
+
+      function convert(type) {
+        const inputStr = document.getElementById("inputValue").value.trim();
+        const alertEl = document.getElementById("alert");
+        const input = parseFloat(inputStr);
+        const from = document.getElementById("fromUnit").value;
+        const to = document.getElementById("toUnit").value;
+        let result = 0;
+
+        if (inputStr === "" || isNaN(input)) {
+          alertEl.innerText = "Please enter a valid number.";
+          document.getElementById("resultValue").value = "";
+          return;
+        }
+        alertEl.innerText = "";
+
+        if (type === "length") {
+          let meter =
+            from === "kilometer"
+              ? input * 1000
+              : from === "centimeter"
+              ? input / 100
+              : from === "inch"
+              ? input * 0.0254
+              : from === "foot"
+              ? input * 0.3048
+              : input;
+          result =
+            to === "kilometer"
+              ? meter / 1000
+              : to === "centimeter"
+              ? meter * 100
+              : to === "inch"
+              ? meter / 0.0254
+              : to === "foot"
+              ? meter / 0.3048
+              : meter;
+        } else if (type === "temperature") {
+          if (from === to) result = input;
+          else if (from === "celsius")
+            result =
+              to === "fahrenheit" ? (input * 9) / 5 + 32 : input + 273.15;
+          else if (from === "fahrenheit")
+            result =
+              to === "celsius"
+                ? ((input - 32) * 5) / 9
+                : ((input - 32) * 5) / 9 + 273.15;
+          else if (from === "kelvin")
+            result =
+              to === "celsius"
+                ? input - 273.15
+                : ((input - 273.15) * 9) / 5 + 32;
+        } else if (type === "area") {
+          let sqm =
+            from === "square kilometer"
+              ? input * 1e6
+              : from === "square foot"
+              ? input * 0.092903
+              : from === "acre"
+              ? input * 4046.86
+              : from === "hectare"
+              ? input * 10000
+              : input;
+          result =
+            to === "square kilometer"
+              ? sqm / 1e6
+              : to === "square foot"
+              ? sqm / 0.092903
+              : to === "acre"
+              ? sqm / 4046.86
+              : to === "hectare"
+              ? sqm / 10000
+              : sqm;
+        }
+
+        document.getElementById("resultValue").value = result.toFixed(4);
+      }
+
+      function resetForm() {
+        document.getElementById("inputValue").value = "";
+        document.getElementById("resultValue").value = "";
+        document.getElementById("inputValue").focus();
+      }
+
+      function goBack() {
+        const container = document.getElementById("converterContainer");
+        const selector = document.getElementById("selectorContainer");
+        container.style.display = "none";
+        selector.style.display = "block";
+        container.innerHTML = "";
+      }
+    </script>
+  </body>
+</html>

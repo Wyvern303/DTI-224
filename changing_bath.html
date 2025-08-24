@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thai Baht Change Calculator</title>
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background: #fff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 350px;
+      }
+
+      h1 {
+        color: black;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      p {
+        color: #555;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+      }
+
+      input {
+        padding: 12px;
+        width: 85%;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        outline: none;
+        transition: 0.3s;
+      }
+
+      input:focus {
+        border-color: black;
+        outline: none;}
+
+      button {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        border: none;
+        background: black;
+        color: #fff;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        margin: 6px;
+      }
+
+      button:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+
+      #result {
+        margin-top: 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        min-height: 24px;
+        color: #333;
+      }
+
+      h3 {
+        color: #6a11cb;
+        margin-bottom: 10px;
+      }
+
+      .error {
+        color: red;
+        font-weight: bold;
+      }
+
+      .back-home {
+        display: block;
+        text-align: center;
+        margin-top: 25px;
+        padding: 10px 20px;
+        background: black;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .back-home:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Thai Baht Change Calculator</h1>
+      <p>Enter amount to calculate change breakdown:</p>
+      <input
+        type="number"
+        id="amountInput"
+        placeholder="Enter amount in THB"
+        min="1"
+        required
+        autofocus
+      />
+      <br />
+      <button onclick="calculateChange()">Submit</button>
+      <button onclick="resetForm()">Clear</button>
+      <div id="result"></div>
+      <a href="index.html" class="back-home">Back to Home</a>
+    </div>
+
+    <script>
+      function calculateChange() {
+        const amountInput = document.getElementById("amountInput");
+        const amountStr = amountInput.value.trim();
+        const resultElement = document.getElementById("result");
+
+        resultElement.innerHTML = "";
+
+        if (amountStr === "") {
+          resultElement.innerHTML =
+            '<p class="error">Please enter an amount.</p>';
+          return;
+        }
+        const amount = parseInt(amountStr, 10);
+        if (isNaN(amount) || amount < 1) {
+          resultElement.innerHTML =
+            '<p class="error">Please enter a valid positive number.</p>';
+          return;
+        }
+
+        let remaining = amount;
+        const denominations = [1000, 500, 100, 50, 20, 1];
+        const results = {};
+
+        for (const denom of denominations) {
+          results[denom] = Math.floor(remaining / denom);
+          remaining %= denom;
+        }
+
+        let output = "<h3>Change Breakdown:</h3>";
+        for (const denom of denominations) {
+          if (results[denom] > 0) {
+            output += `<p>${results[denom]} × ฿${denom}</p>`;
+          }
+        }
+        resultElement.innerHTML = output;
+      }
+
+      function resetForm() {
+        document.getElementById("amountInput").value = "";
+        document.getElementById("result").innerHTML = "";
+        document.getElementById("amountInput").focus();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Grade Calculator</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        width: 340px;
+      }
+
+      h1 {
+        color: black;
+        margin-top: 0;
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+
+      label {
+        font-size: 16px;
+        color: #444;
+        font-weight: 500;
+      }
+
+      input[type="number"] {
+        width: 85%;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        transition: border 0.3s, box-shadow 0.3s;
+      }
+
+      input[type="number"]:focus {
+        border-color: black;
+        outline: none;
+      }
+
+      #result {
+        font-weight: bold;
+        margin-top: 20px;
+        font-size: 18px;
+        min-height: 24px;
+      }
+
+      .error {
+        color: #e63946; /* red */
+      }
+
+      .valid {
+        color: #2ecc71; /* green */
+      }
+      button {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        border: none;
+        background: black;
+        color: #fff;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        margin: 6px;
+      }
+
+      button:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+
+      .back-home {
+        display: block;
+        text-align: center;
+        margin-top: 25px;
+        padding: 10px 20px;
+        background: black;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .back-home:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Grade Calculator</h1>
+      <form id="gradeForm" onsubmit="getGrade(event)">
+        <label for="score">Enter Score (0-100):</label>
+        <br />
+        <input
+          type="number"
+          id="score"
+          name="score"
+          step="1"
+          placeholder="Enter your score"
+          autofocus
+        />
+        <br />
+        <button type="submit">Submit</button>
+        <button type="button" onclick="clear()">Clear</button>
+      </form>
+      <p id="result"></p>
+      <!-- Back to Home button -->
+      <a href="index.html" class="back-home">Back to Home</a>
+    </div>
+
+    <script>
+      function getGrade(event) {
+        event.preventDefault();
+        const resultEl = document.getElementById("result");
+        const scoreInput = document.getElementById("score");
+        const scoreStr = scoreInput.value.trim();
+
+        resultEl.textContent = "";
+
+        if (scoreStr === "" || scoreStr === null) {
+          resultEl.textContent = "Please enter a score.";
+          resultEl.classList.add("error");
+          return;
+        }
+
+        const score = parseInt(scoreStr);
+
+        if (isNaN(score) || score < 0 || score > 100) {
+          resultEl.textContent =
+            "Please enter a valid score between 0 and 100.";
+          resultEl.classList.add("error");
+          return;
+        }
+
+        let grade = "";
+        if (score >= 90) {
+          grade = "A";
+        } else if (score >= 80) {
+          grade = "B";
+        } else if (score >= 70) {
+          grade = "C";
+        } else if (score >= 60) {
+          grade = "D";
+        } else {
+          grade = "F";
+        }
+
+        resultEl.textContent = `You got "${grade}" grade.`;
+        resultEl.classList.add("valid");
+      }
+
+      function clear() {
+        const form = document.getElementById("gradeForm");
+        const resultEl = document.getElementById("result");
+
+        form.reset();
+        resultEl.textContent = "";
+        resultEl.className = "";
+      }
+    </script>
+  </body>
+</html>

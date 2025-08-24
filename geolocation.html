@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Distance to Kasem Bundit University</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        width: 340px;
+      }
+
+      h1 {
+        color: black;
+        font-size: 24px;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+      }
+
+      p.description {
+        font-size: 16px;
+        color: #444;
+        margin-bottom: 25px;
+      }
+
+      button {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        border: none;
+        background: black;
+        color: #fff;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        margin: 6px;
+      }
+
+      button:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+
+      #result {
+        margin-top: 25px;
+        font-weight: bold;
+        font-size: 18px;
+        min-height: 40px;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: inset 0 0 8px rgba(106, 17, 203, 0.2);
+        color: #12305a;
+      }
+
+      .error {
+        color: #e63946;
+      }
+
+      .valid {
+        color: #28a745;
+      }
+      .back-home {
+        display: block;
+        text-align: center;
+        margin-top: 25px;
+        padding: 10px 20px;
+        background: black;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .back-home:hover {
+        background: #555;
+        color: #fff;
+        transition: 0.1s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Distance to Kasem Bundit University</h1>
+      <p class="description">
+        Click the button to find out how far you are from Kasem Bundit University (Romklao Campus).
+      </p>
+
+      <button onclick="calculateDistance()">Where am I?</button>
+      
+      <div id="result"></div>
+      <a href="index.html" class="back-home">Back to Home</a>
+    </div>
+
+    <script>
+      // Kasem Bundit University Romklao campus coordinates
+      const uniLocation = {
+        lat: 13.8037825,
+        lng: 100.7368224,
+      };
+
+      function calculateDistance() {
+        const resultElement = document.getElementById("result");
+
+        if (!navigator.geolocation) {
+          resultElement.innerHTML =
+            '<span class="error">Geolocation is not supported by your browser.</span>';
+          return;
+        }
+
+        resultElement.textContent = "Locating...";
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+
+            const distance = getDistanceBetween(userLocation, uniLocation);
+            resultElement.innerHTML = `<span class="valid">You're ${distance.toFixed(
+              2
+            )} km away from Kasem Bundit University</span>`;
+          },
+          (error) => {
+            let errorMessage;
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage = "You denied the request for Geolocation.";
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage = "Location information is unavailable.";
+                break;
+              case error.TIMEOUT:
+                errorMessage = "Request to get location timed out.";
+                break;
+              default:
+                errorMessage = "An unknown error occurred.";
+            }
+            resultElement.innerHTML = `<span class="error">Error: ${errorMessage}</span>`;
+          }
+        );
+      }
+
+      function getDistanceBetween(loc1, loc2) {
+        const R = 6371; // Radius of Earth in km
+        const latDiff = toRadians(loc2.lat - loc1.lat);
+        const lngDiff = toRadians(loc2.lng - loc1.lng);
+
+        const a =
+          Math.sin(latDiff / 2) ** 2 +
+          Math.cos(toRadians(loc1.lat)) *
+            Math.cos(toRadians(loc2.lat)) *
+            Math.sin(lngDiff / 2) ** 2;
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+
+      function toRadians(degrees) {
+        return degrees * (Math.PI / 180);
+      }
+    </script>
+  </body>
+</html>
